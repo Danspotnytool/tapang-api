@@ -43,7 +43,8 @@ app.get('/', (req, res) => {
 			lyrics: '/song/:id/lyrics',
 			resource: '/song/:id/resource',
 			download: '/song/:id/download',
-			audio: '/song/:id/download/audio'
+			audio: '/song/:id/download/audio',
+			video: '/song/:id/download/video'
 		}
 	});
 });

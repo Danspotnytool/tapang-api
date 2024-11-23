@@ -170,5 +170,50 @@ export default (ytmusic) => {
 		res.status(200).redirect(highestQualityUrl.url);
 	});
 
+	song.get('/:id/download/video/', async (req, res) => {
+		const id = req.params.id;
+		if (!id) {
+			return res.status(400).json({ error: 'ID is required' });
+		};
+
+		/**
+		 * @type {phin.IJSONResponse<Resource>}
+		 */
+		const response = await phin({
+			url: 'https://youtube-quick-video-downloader.p.rapidapi.com/api/youtube/links',
+			method: 'POST',
+			headers: {
+				'x-rapidapi-host': 'youtube-quick-video-downloader.p.rapidapi.com',
+				'x-rapidapi-key': '1003c07223msh07af8432abe6d7fp135876jsn34d096ee567f'
+			},
+			data: {
+				url: `https://www.youtube.com/watch?v=${id}`
+			},
+			parse: 'json'
+		});
+
+		// Find the url with highest quality
+		const resources = response.body;
+		const highestQualityResource = resources.reduce((prev, curr) => {
+			if (curr.urls.qualityNumber > prev.urls.qualityNumber) {
+				return curr;
+			};
+			return prev;
+		});
+		const highestQualityUrl = highestQualityResource.urls.reduce((prev, curr) => {
+			if (!curr.audio) {
+				if (curr.qualityNumber > prev.qualityNumber) {
+					return curr;
+				};
+			};
+			return prev;
+		});
+		if (!highestQualityUrl) {
+			return res.status(404).json({ error: 'No video found' });
+		};
+
+		res.status(200).redirect(highestQualityUrl.url);
+	});
+
 	return song;
 };
