@@ -13,8 +13,11 @@ export default (ytmusic) => {
 		if (!id) {
 			return res.status(400).json({ error: 'ID is required' });
 		};
-		const song = await ytmusic.getSong(id);
-		res.status(200).json(song);
+		ytmusic.getSong(id).then((song) => {
+			res.status(200).json(song);
+		}).catch((error) => {
+			res.status(500).json({ error: error.message });
+		});
 	});
 
 	song.get('/:id/lyrics/', async (req, res) => {
