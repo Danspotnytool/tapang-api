@@ -1,6 +1,6 @@
 
 import express from 'express';
-import phin from 'phin';
+import axios from 'axios';
 
 const song = express.Router();
 
@@ -78,7 +78,7 @@ export default (ytmusic) => {
 			return res.status(400).json({ error: 'ID is required' });
 		};
 
-		phin({
+		axios({
 			url: 'https://youtube-quick-video-downloader.p.rapidapi.com/api/youtube/links',
 			method: 'POST',
 			headers: {
@@ -87,10 +87,9 @@ export default (ytmusic) => {
 			},
 			data: {
 				url: `https://www.youtube.com/watch?v=${id}`
-			},
-			parse: 'json'
+			}
 		}).then((response) => {
-			res.status(200).json(response.body);
+			res.status(200).json(response.data);
 		}).catch((error) => {
 			res.status(500).json({
 				error: error.message,
@@ -107,10 +106,7 @@ export default (ytmusic) => {
 			return res.status(400).json({ error: 'ID is required' });
 		};
 
-		/**
-		 * @type {phin.IJSONResponse<Resource>}
-		 */
-		phin({
+		axios({
 			url: 'https://youtube-quick-video-downloader.p.rapidapi.com/api/youtube/links',
 			method: 'POST',
 			headers: {
@@ -119,14 +115,13 @@ export default (ytmusic) => {
 			},
 			data: {
 				url: `https://www.youtube.com/watch?v=${id}`
-			},
-			parse: 'json'
+			}
 		}).then((response) => {
 			// Find the url with highest quality
 			/**
 			 * @type {Resource}
 			 */
-			const resources = response.body;
+			const resources = response.data;
 			const highestQualityResource = resources.reduce((prev, curr) => {
 				if (curr.urls.qualityNumber > prev.urls.qualityNumber) {
 					return curr;
@@ -162,7 +157,7 @@ export default (ytmusic) => {
 			return res.status(400).json({ error: 'ID is required' });
 		};
 
-		phin({
+		axios({
 			url: 'https://youtube-quick-video-downloader.p.rapidapi.com/api/youtube/links',
 			method: 'POST',
 			headers: {
@@ -171,14 +166,13 @@ export default (ytmusic) => {
 			},
 			data: {
 				url: `https://www.youtube.com/watch?v=${id}`
-			},
-			parse: 'json'
+			}
 		}).then((response) => {
 			// Find the url with highest quality
 			/**
 			 * @type {Resource}
 			 */
-			const resources = response.body;
+			const resources = response.data;
 			const highestQualityResource = resources.reduce((prev, curr) => {
 				if (curr.urls.qualityNumber > prev.urls.qualityNumber) {
 					return curr;
@@ -214,7 +208,7 @@ export default (ytmusic) => {
 			return res.status(400).json({ error: 'ID is required' });
 		};
 
-		phin({
+		axios({
 			url: 'https://youtube-quick-video-downloader.p.rapidapi.com/api/youtube/links',
 			method: 'POST',
 			headers: {
@@ -223,14 +217,13 @@ export default (ytmusic) => {
 			},
 			data: {
 				url: `https://www.youtube.com/watch?v=${id}`
-			},
-			parse: 'json'
+			}
 		}).then((response) => {
 			// Find the url with highest quality
 			/**
 			 * @type {Resource}
 			 */
-			const resources = response.body;
+			const resources = response.data;
 			const highestQualityResource = resources.reduce((prev, curr) => {
 				if (curr.urls.qualityNumber > prev.urls.qualityNumber) {
 					return curr;
