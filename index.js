@@ -1,5 +1,6 @@
 import YTMusic from 'ytmusic-api';
 import * as logger from 'log-update';
+import ytdl from '@distube/ytdl-core';
 
 const ytmusic = new YTMusic();
 await ytmusic.initialize();
@@ -61,9 +62,9 @@ app.get('/', (req, res) => {
 
 // API
 import search from './routes/search.js';
-app.use('/search', search(ytmusic));
+app.use('/search', search(ytmusic, ytdl));
 import song from './routes/song.js';
-app.use('/song', song(ytmusic));
+app.use('/song', song(ytmusic, ytdl));
 
 
 

@@ -5,16 +5,21 @@ import axios from 'axios';
 const song = express.Router();
 
 /**
- * @type {(ytmusic: import('ytmusic-api').default) => import('express').Router}
+ * @type {(ytmusic: import('ytmusic-api').default, ytdl: import('@distube/ytdl-core')) => import('express').Router}
  */
-export default (ytmusic) => {
+export default (ytmusic, ytdl) => {
 	song.get('/:id', async (req, res) => {
 		const id = req.params.id;
 		if (!id) {
 			return res.status(400).json({ error: 'ID is required' });
 		};
-		ytmusic.getSong(id).then((song) => {
-			res.status(200).json(song);
+
+		ytdl.getInfo(`https://www.youtube.com/watch?v=${id}`).then((info) => {
+			const data = {
+				id: id,
+				title: info.videoDetails.title
+			};
+			res.status(200).json(data);
 		}).catch((error) => {
 			res.status(500).json({
 				error: error.message,
