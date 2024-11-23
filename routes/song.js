@@ -15,11 +15,7 @@ export default (ytmusic, ytdl) => {
 		};
 
 		ytdl.getInfo(`https://www.youtube.com/watch?v=${id}`).then((info) => {
-			const data = {
-				id: id,
-				title: info.videoDetails.title
-			};
-			res.status(200).json(data);
+			res.status(200).json(info.videoDetails);
 		}).catch((error) => {
 			res.status(500).json({
 				error: error.message,
