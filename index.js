@@ -41,6 +41,8 @@ app.get('/', (req, res) => {
 // API
 import search from './routes/search.js';
 app.use('/search', search(ytmusic));
+import song from './routes/song.js';
+app.use('/song', song(ytmusic));
 
 
 // Start server
