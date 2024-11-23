@@ -35,7 +35,15 @@ app.use((req, res, next) => {
 
 // Routes
 app.get('/', (req, res) => {
-	res.status(200).json({ message: 'Hello! From Tapang API' });
+	res.status(200).json({
+		message: 'Hello! From Tapang API',
+		sample: {
+			search: '/search/:query',
+			song: '/song/:id',
+			lyrics: '/song/:id/lyrics',
+			resource: '/song/:id/resource',
+		}
+	});
 });
 
 // API
