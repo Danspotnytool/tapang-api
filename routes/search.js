@@ -12,8 +12,17 @@ export default (ytmusic) => {
 		if (!query) {
 			return res.status(400).json({ error: 'Query is required' });
 		};
-		const search = await ytmusic.search(query);
-		res.status(200).json(search);
+
+		ytmusic.search(query).then((results) => {
+			res.status(200).json(results);
+		}).catch((error) => {
+			res.status(500).json({
+				error: error.message,
+				variables: {
+					query: query
+				}
+			});
+		});
 	});
 	return search;
 };

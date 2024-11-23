@@ -16,7 +16,12 @@ export default (ytmusic) => {
 		ytmusic.getSong(id).then((song) => {
 			res.status(200).json(song);
 		}).catch((error) => {
-			res.status(500).json({ error: error.message });
+			res.status(500).json({
+				error: error.message,
+				variables: {
+					id: id
+				}
+			});
 		});
 	});
 
@@ -25,8 +30,16 @@ export default (ytmusic) => {
 		if (!id) {
 			return res.status(400).json({ error: 'ID is required' });
 		};
-		const lyrics = await ytmusic.getLyrics(id);
-		res.status(200).json(lyrics);
+		ytmusic.getLyrics(id).then((lyrics) => {
+			res.status(200).json(lyrics);
+		}).catch((error) => {
+			res.status(500).json({
+				error: error.message,
+				variables: {
+					id: id
+				}
+			});
+		});
 	});
 
 
@@ -65,10 +78,7 @@ export default (ytmusic) => {
 			return res.status(400).json({ error: 'ID is required' });
 		};
 
-		/**
-		 * @type {phin.IJSONResponse<Resource>}
-		 */
-		const response = await phin({
+		phin({
 			url: 'https://youtube-quick-video-downloader.p.rapidapi.com/api/youtube/links',
 			method: 'POST',
 			headers: {
@@ -79,8 +89,16 @@ export default (ytmusic) => {
 				url: `https://www.youtube.com/watch?v=${id}`
 			},
 			parse: 'json'
+		}).then((response) => {
+			res.status(200).json(response.body);
+		}).catch((error) => {
+			res.status(500).json({
+				error: error.message,
+				variables: {
+					id: id
+				}
+			});
 		});
-		res.status(200).json(response.body);
 	});
 
 	song.get('/:id/download/', async (req, res) => {
@@ -92,7 +110,7 @@ export default (ytmusic) => {
 		/**
 		 * @type {phin.IJSONResponse<Resource>}
 		 */
-		const response = await phin({
+		phin({
 			url: 'https://youtube-quick-video-downloader.p.rapidapi.com/api/youtube/links',
 			method: 'POST',
 			headers: {
@@ -103,29 +121,39 @@ export default (ytmusic) => {
 				url: `https://www.youtube.com/watch?v=${id}`
 			},
 			parse: 'json'
-		});
-
-		// Find the url with highest quality
-		const resources = response.body;
-		const highestQualityResource = resources.reduce((prev, curr) => {
-			if (curr.urls.qualityNumber > prev.urls.qualityNumber) {
-				return curr;
-			};
-			return prev;
-		});
-		const highestQualityUrl = highestQualityResource.urls.reduce((prev, curr) => {
-			if (curr.audio) {
-				if (curr.qualityNumber > prev.qualityNumber) {
+		}).then((response) => {
+			// Find the url with highest quality
+			/**
+			 * @type {Resource}
+			 */
+			const resources = response.body;
+			const highestQualityResource = resources.reduce((prev, curr) => {
+				if (curr.urls.qualityNumber > prev.urls.qualityNumber) {
 					return curr;
 				};
+				return prev;
+			});
+			const highestQualityUrl = highestQualityResource.urls.reduce((prev, curr) => {
+				if (curr.audio) {
+					if (curr.qualityNumber > prev.qualityNumber) {
+						return curr;
+					};
+				};
+				return prev;
+			});
+			if (!highestQualityUrl) {
+				return res.status(404).json({ error: 'No audio found' });
 			};
-			return prev;
-		});
-		if (!highestQualityUrl) {
-			return res.status(404).json({ error: 'No audio found' });
-		};
 
-		res.status(200).json(highestQualityUrl);
+			res.status(200).json(highestQualityUrl);
+		}).catch((error) => {
+			res.status(500).json({
+				error: error.message,
+				variables: {
+					id: id
+				}
+			});
+		});
 	});
 
 	song.get('/:id/download/audio/', async (req, res) => {
@@ -134,10 +162,7 @@ export default (ytmusic) => {
 			return res.status(400).json({ error: 'ID is required' });
 		};
 
-		/**
-		 * @type {phin.IJSONResponse<Resource>}
-		 */
-		const response = await phin({
+		phin({
 			url: 'https://youtube-quick-video-downloader.p.rapidapi.com/api/youtube/links',
 			method: 'POST',
 			headers: {
@@ -148,29 +173,39 @@ export default (ytmusic) => {
 				url: `https://www.youtube.com/watch?v=${id}`
 			},
 			parse: 'json'
-		});
-
-		// Find the url with highest quality
-		const resources = response.body;
-		const highestQualityResource = resources.reduce((prev, curr) => {
-			if (curr.urls.qualityNumber > prev.urls.qualityNumber) {
-				return curr;
-			};
-			return prev;
-		});
-		const highestQualityUrl = highestQualityResource.urls.reduce((prev, curr) => {
-			if (curr.audio) {
-				if (curr.qualityNumber > prev.qualityNumber) {
+		}).then((response) => {
+			// Find the url with highest quality
+			/**
+			 * @type {Resource}
+			 */
+			const resources = response.body;
+			const highestQualityResource = resources.reduce((prev, curr) => {
+				if (curr.urls.qualityNumber > prev.urls.qualityNumber) {
 					return curr;
 				};
+				return prev;
+			});
+			const highestQualityUrl = highestQualityResource.urls.reduce((prev, curr) => {
+				if (curr.audio) {
+					if (curr.qualityNumber > prev.qualityNumber) {
+						return curr;
+					};
+				};
+				return prev;
+			});
+			if (!highestQualityUrl) {
+				return res.status(404).json({ error: 'No audio found' });
 			};
-			return prev;
-		});
-		if (!highestQualityUrl) {
-			return res.status(404).json({ error: 'No audio found' });
-		};
 
-		res.status(200).redirect(highestQualityUrl.url);
+			res.status(200).redirect(highestQualityUrl.url);
+		}).catch((error) => {
+			res.status(500).json({
+				error: error.message,
+				variables: {
+					id: id
+				}
+			});
+		});
 	});
 
 	song.get('/:id/download/video/', async (req, res) => {
@@ -179,10 +214,7 @@ export default (ytmusic) => {
 			return res.status(400).json({ error: 'ID is required' });
 		};
 
-		/**
-		 * @type {phin.IJSONResponse<Resource>}
-		 */
-		const response = await phin({
+		phin({
 			url: 'https://youtube-quick-video-downloader.p.rapidapi.com/api/youtube/links',
 			method: 'POST',
 			headers: {
@@ -193,29 +225,39 @@ export default (ytmusic) => {
 				url: `https://www.youtube.com/watch?v=${id}`
 			},
 			parse: 'json'
-		});
-
-		// Find the url with highest quality
-		const resources = response.body;
-		const highestQualityResource = resources.reduce((prev, curr) => {
-			if (curr.urls.qualityNumber > prev.urls.qualityNumber) {
-				return curr;
-			};
-			return prev;
-		});
-		const highestQualityUrl = highestQualityResource.urls.reduce((prev, curr) => {
-			if (!curr.audio) {
-				if (curr.qualityNumber > prev.qualityNumber) {
+		}).then((response) => {
+			// Find the url with highest quality
+			/**
+			 * @type {Resource}
+			 */
+			const resources = response.body;
+			const highestQualityResource = resources.reduce((prev, curr) => {
+				if (curr.urls.qualityNumber > prev.urls.qualityNumber) {
 					return curr;
 				};
+				return prev;
+			});
+			const highestQualityUrl = highestQualityResource.urls.reduce((prev, curr) => {
+				if (!curr.audio) {
+					if (curr.qualityNumber > prev.qualityNumber) {
+						return curr;
+					};
+				};
+				return prev;
+			});
+			if (!highestQualityUrl) {
+				return res.status(404).json({ error: 'No video found' });
 			};
-			return prev;
-		});
-		if (!highestQualityUrl) {
-			return res.status(404).json({ error: 'No video found' });
-		};
 
-		res.status(200).redirect(highestQualityUrl.url);
+			res.status(200).redirect(highestQualityUrl.url);
+		}).catch((error) => {
+			res.status(500).json({
+				error: error.message,
+				variables: {
+					id: id
+				}
+			});
+		});
 	});
 
 	return song;
