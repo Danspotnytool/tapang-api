@@ -128,7 +128,7 @@ export default (ytmusic) => {
 				};
 				return prev;
 			});
-			const highestQualityUrl = highestQualityResource.urls.reduce((prev, curr) => {
+			const highestQualityAudioUrl = highestQualityResource.urls.reduce((prev, curr) => {
 				if (curr.audio) {
 					if (curr.qualityNumber > prev.qualityNumber) {
 						return curr;
@@ -136,11 +136,19 @@ export default (ytmusic) => {
 				};
 				return prev;
 			});
-			if (!highestQualityUrl) {
-				return res.status(404).json({ error: 'No audio found' });
-			};
+			const highestQualityVideoUrl = highestQualityResource.urls.reduce((prev, curr) => {
+				if (!curr.audio) {
+					if (curr.qualityNumber > prev.qualityNumber) {
+						return curr;
+					};
+				};
+				return prev;
+			});
 
-			res.status(200).json(highestQualityUrl);
+			res.status(200).json({
+				audio: highestQualityAudioUrl,
+				video: highestQualityVideoUrl
+			});
 		}).catch((error) => {
 			res.status(500).json({
 				error: error.message,
