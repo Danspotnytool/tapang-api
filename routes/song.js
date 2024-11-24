@@ -15,8 +15,8 @@ export default (ytmusic, ytdl) => {
 			return res.status(400).json({ error: 'ID is required' });
 		};
 
-		ytmusic.getSong(id).then((song) => {
-			res.status(200).json(song);
+		yts({ videoId: id }).then((result) => {
+			res.status(200).json(result);
 		}).catch((error) => {
 			res.status(500).json({
 				error: error.message,
@@ -32,8 +32,8 @@ export default (ytmusic, ytdl) => {
 		if (!id) {
 			return res.status(400).json({ error: 'ID is required' });
 		};
-		yts({ videoId: id }).then((result) => {
-			res.status(200).json(result);
+		ytmusic.getLyrics(id).then((lyrics) => {
+			res.status(200).json(lyrics);
 		}).catch((error) => {
 			res.status(500).json({
 				error: error.message,
