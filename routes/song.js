@@ -1,6 +1,7 @@
 
 import express from 'express';
 import axios from 'axios';
+import yts from 'yt-search';
 
 const song = express.Router();
 
@@ -31,8 +32,8 @@ export default (ytmusic, ytdl) => {
 		if (!id) {
 			return res.status(400).json({ error: 'ID is required' });
 		};
-		ytmusic.getLyrics(id).then((lyrics) => {
-			res.status(200).json(lyrics);
+		yts({ videoId: id }).then((result) => {
+			res.status(200).json(result);
 		}).catch((error) => {
 			res.status(500).json({
 				error: error.message,
