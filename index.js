@@ -113,6 +113,24 @@ app.get('/', (req, res) => {
 				params: {
 					id: 'String'
 				}
+			},
+			{
+				name: 'song stream audio',
+				url: '/song/:id/stream/audio',
+				method: 'GET',
+				description: 'Stream song audio',
+				params: {
+					id: 'String'
+				}
+			},
+			{
+				name: 'song stream video',
+				url: '/song/:id/stream/video',
+				method: 'GET',
+				description: 'Stream song video',
+				params: {
+					id: 'String'
+				}
 			}
 		]
 	});
