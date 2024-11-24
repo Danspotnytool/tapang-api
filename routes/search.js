@@ -4,9 +4,9 @@ import express from 'express';
 const search = express.Router();
 
 /**
- * @type {(ytmusic: import('ytmusic-api').default, ytdl: import('@distube/ytdl-core')) => import('express').Router}
+ * @type {(ytmusic: import('ytmusic-api').default, ytdl: import('@distube/ytdl-core'), agent: import('@distube/ytdl-core').Agent) => import('express').Router}
  */
-export default (ytmusic, ytdl) => {
+export default (ytmusic, ytdl, agent) => {
 	search.get('/:query', async (req, res) => {
 		const query = req.params.query;
 		if (!query) {

@@ -5,9 +5,9 @@ import axios from 'axios';
 const song = express.Router();
 
 /**
- * @type {(ytmusic: import('ytmusic-api').default, ytdl: import('@distube/ytdl-core')) => import('express').Router}
+ * @type {(ytmusic: import('ytmusic-api').default, ytdl: import('@distube/ytdl-core'), agent: import('@distube/ytdl-core').Agent) => import('express').Router}
  */
-export default (ytmusic, ytdl) => {
+export default (ytmusic, ytdl, agent) => {
 	song.get('/:id', async (req, res) => {
 		const id = req.params.id;
 		if (!id) {

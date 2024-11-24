@@ -1,9 +1,18 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
 import YTMusic from 'ytmusic-api';
 import * as logger from 'log-update';
 import ytdl from '@distube/ytdl-core';
 
 const ytmusic = new YTMusic();
 await ytmusic.initialize();
+const cookie = JSON.parse(process.env.YTMUSIC_COOKIE.replace('\'', '"'));
+const agent = ytdl.createAgent(cookie, {
+	pipelining: 5,
+	maxRedirections: 2,
+	localAddress: '127.0.0.1'
+});
 
 import express from 'express';
 import http from 'http';
@@ -62,9 +71,9 @@ app.get('/', (req, res) => {
 
 // API
 import search from './routes/search.js';
-app.use('/search', search(ytmusic, ytdl));
+app.use('/search', search(ytmusic, ytdl, agent));
 import song from './routes/song.js';
-app.use('/song', song(ytmusic, ytdl));
+app.use('/song', song(ytmusic, ytdl, agent));
 
 
 
