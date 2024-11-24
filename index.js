@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
-import YTMusic from 'ytmusic-api';
+import YTMusic from './ytmusic-api/dist/index.js';
 import * as logger from 'log-update';
 import ytdl from '@distube/ytdl-core';
 
