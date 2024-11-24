@@ -88,46 +88,10 @@ app.get('/', (req, res) => {
 				}
 			},
 			{
-				name: 'song download',
-				url: '/song/:id/download',
-				method: 'GET',
-				description: 'Download song',
-				params: {
-					id: 'String'
-				}
-			},
-			{
-				name: 'song download audio',
-				url: '/song/:id/download/audio',
-				method: 'GET',
-				description: 'Download song audio',
-				params: {
-					id: 'String'
-				}
-			},
-			{
-				name: 'song download video',
-				url: '/song/:id/download/video',
-				method: 'GET',
-				description: 'Download song video',
-				params: {
-					id: 'String'
-				}
-			},
-			{
 				name: 'song stream audio',
-				url: '/song/:id/stream/audio',
+				url: '/song/:id/stream',
 				method: 'GET',
 				description: 'Stream song audio',
-				params: {
-					id: 'String'
-				}
-			},
-			{
-				name: 'song stream video',
-				url: '/song/:id/stream/video',
-				method: 'GET',
-				description: 'Stream song video',
 				params: {
 					id: 'String'
 				}
