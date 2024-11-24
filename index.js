@@ -1,17 +1,11 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
-import YTMusic from './ytmusic-api/dist/index.js';
+import YTMusic from 'ytmusic-api';
 import * as logger from 'log-update';
-import ytdl from '@distube/ytdl-core';
 
-const cookie = JSON.parse(process.env.YT_COOKIES.replaceAll('\'', '"'));
 const ytmusic = new YTMusic();
-await ytmusic.initialize({
-	cookies: cookie.map((cookie) => {
-		return `${cookie.name}=${cookie.value}`;
-	}).join('; ')
-});
+await ytmusic.initialize();
 import express from 'express';
 import http from 'http';
 import { WebSocketServer } from 'ws';
@@ -41,13 +35,9 @@ app.use((req, res, next) => {
 	req.localAddress = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 
 	const url = req.url;
-
 	const log = logger.createLogUpdate(process.stdout);
-
 	log(`[${new Date().toLocaleString()}] ${req.method} ${url}`);
-
 	next();
-
 	res.on('finish', () => {
 		log(`[${new Date().toLocaleString()}] ${req.method} ${url} - ${res.statusCode} ${res.statusMessage}`);
 	});
@@ -73,9 +63,9 @@ app.get('/', (req, res) => {
 
 // API
 import search from './routes/search.js';
-app.use('/search', search(ytmusic, ytdl));
+app.use('/search', search(ytmusic));
 import song from './routes/song.js';
-app.use('/song', song(ytmusic, ytdl));
+app.use('/song', song(ytmusic));
 
 
 

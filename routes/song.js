@@ -6,9 +6,9 @@ import yts from 'yt-search';
 const song = express.Router();
 
 /**
- * @type {(ytmusic: import('ytmusic-api').default, ytdl: import('@distube/ytdl-core'), agent: import('@distube/ytdl-core').Agent) => import('express').Router}
+ * @type {(ytmusic: import('ytmusic-api').default) => import('express').Router}
  */
-export default (ytmusic, ytdl) => {
+export default (ytmusic) => {
 	song.get('/:id', async (req, res) => {
 		const id = req.params.id;
 		if (!id) {
