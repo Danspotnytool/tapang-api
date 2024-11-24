@@ -49,15 +49,72 @@ app.use((req, res, next) => {
 app.get('/', (req, res) => {
 	res.status(200).json({
 		message: 'Hello! From Tapang API',
-		sample: {
-			search: '/search/:query',
-			song: '/song/:id',
-			lyrics: '/song/:id/lyrics',
-			resource: '/song/:id/resource',
-			download: '/song/:id/download',
-			audio: '/song/:id/download/audio',
-			video: '/song/:id/download/video'
-		}
+		rotes: [
+			{
+				name: 'search',
+				url: '/search',
+				method: 'GET',
+				description: 'Search for songs, albums, artists, and playlists',
+				params: {
+					query: 'String'
+				}
+			},
+			
+			{
+				name: 'song',
+				url: '/song',
+				method: 'GET',
+				description: 'Get song details',
+				params: {
+					id: 'String'
+				}
+			},
+			{
+				name: 'song lyrics',
+				url: '/song/:id/lyrics',
+				method: 'GET',
+				description: 'Get song lyrics',
+				params: {
+					id: 'String'
+				}
+			},
+			{
+				name: 'song resource',
+				url: '/song/:id/resource',
+				method: 'GET',
+				description: 'Get song resource',
+				params: {
+					id: 'String'
+				}
+			},
+			{
+				name: 'song download',
+				url: '/song/:id/download',
+				method: 'GET',
+				description: 'Download song',
+				params: {
+					id: 'String'
+				}
+			},
+			{
+				name: 'song download audio',
+				url: '/song/:id/download/audio',
+				method: 'GET',
+				description: 'Download song audio',
+				params: {
+					id: 'String'
+				}
+			},
+			{
+				name: 'song download video',
+				url: '/song/:id/download/video',
+				method: 'GET',
+				description: 'Download song video',
+				params: {
+					id: 'String'
+				}
+			}
+		]
 	});
 });
 
