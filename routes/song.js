@@ -23,6 +23,7 @@ export default (ytmusic, ytdl, agent) => {
 					id: id
 				}
 			});
+			console.error(error);
 		});
 	});
 
