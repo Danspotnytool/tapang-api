@@ -2,6 +2,7 @@
 import express from 'express';
 import axios from 'axios';
 import yts from 'yt-search';
+import ytdl from '@distube/ytdl-core';
 
 const song = express.Router();
 
@@ -168,42 +169,28 @@ export default (ytmusic) => {
 		if (!id) {
 			return res.status(400).json({ error: 'ID is required' });
 		};
-
-		axios({
-			url: 'https://youtube-quick-video-downloader.p.rapidapi.com/api/youtube/links',
-			method: 'POST',
-			headers: {
-				'x-rapidapi-host': 'youtube-quick-video-downloader.p.rapidapi.com',
-				'x-rapidapi-key': '1003c07223msh07af8432abe6d7fp135876jsn34d096ee567f'
-			},
-			data: {
-				url: `https://www.youtube.com/watch?v=${id}`
-			}
-		}).then((response) => {
-			// Find the url with highest quality
-			/**
-			 * @type {Resource}
-			 */
-			const resources = response.data;
-			const highestQualityResource = resources.reduce((prev, curr) => {
-				if (curr.urls.qualityNumber > prev.urls.qualityNumber) {
-					return curr;
-				};
-				return prev;
-			});
-			const highestQualityUrl = highestQualityResource.urls.reduce((prev, curr) => {
-				if (curr.audio) {
-					if (curr.qualityNumber > prev.qualityNumber) {
-						return curr;
-					};
-				};
-				return prev;
-			});
-			if (!highestQualityUrl) {
+		
+		ytdl.getInfo(id).then((info) => {
+			const audio = info.formats.find((format) => format.hasAudio && !format.hasVideo);
+			if (!audio) {
 				return res.status(404).json({ error: 'No audio found' });
 			};
-
-			res.status(200).redirect(highestQualityUrl.url);
+			res.setHeader('Content-Disposition', `attachment; filename="${info.videoDetails.title.replace(/[^a-zA-Z0-9]/g, '_')}.${audio.container}"`);
+			res.setHeader('Content-Type', `audio/${audio.container}`);
+			axios({
+				url: audio.url,
+				method: 'GET',
+				responseType: 'stream'
+			}).then((response) => {
+				response.data.pipe(res);
+			}).catch((error) => {
+				res.status(500).json({
+					error: error.message,
+					variables: {
+						id: id
+					}
+				});
+			});
 		}).catch((error) => {
 			res.status(500).json({
 				error: error.message,
@@ -219,41 +206,27 @@ export default (ytmusic) => {
 			return res.status(400).json({ error: 'ID is required' });
 		};
 
-		axios({
-			url: 'https://youtube-quick-video-downloader.p.rapidapi.com/api/youtube/links',
-			method: 'POST',
-			headers: {
-				'x-rapidapi-host': 'youtube-quick-video-downloader.p.rapidapi.com',
-				'x-rapidapi-key': '1003c07223msh07af8432abe6d7fp135876jsn34d096ee567f'
-			},
-			data: {
-				url: `https://www.youtube.com/watch?v=${id}`
-			}
-		}).then((response) => {
-			// Find the url with highest quality
-			/**
-			 * @type {Resource}
-			 */
-			const resources = response.data;
-			const highestQualityResource = resources.reduce((prev, curr) => {
-				if (curr.urls.qualityNumber > prev.urls.qualityNumber) {
-					return curr;
-				};
-				return prev;
-			});
-			const highestQualityUrl = highestQualityResource.urls.reduce((prev, curr) => {
-				if (!curr.audio) {
-					if (curr.qualityNumber > prev.qualityNumber) {
-						return curr;
-					};
-				};
-				return prev;
-			});
-			if (!highestQualityUrl) {
+		ytdl.getInfo(id).then((info) => {
+			const video = info.formats.find((format) => format.hasVideo && !format.hasAudio);
+			if (!video) {
 				return res.status(404).json({ error: 'No video found' });
 			};
-
-			res.status(200).redirect(highestQualityUrl.url);
+			res.setHeader('Content-Disposition', `attachment; filename="${info.videoDetails.title.replace(/[^a-zA-Z0-9]/g, '_')}.${video.container}"`);
+			res.setHeader('Content-Type', `video/${video.container}`);
+			axios({
+				url: video.url,
+				method: 'GET',
+				responseType: 'stream'
+			}).then((response) => {
+				response.data.pipe(res);
+			}).catch((error) => {
+				res.status(500).json({
+					error: error.message,
+					variables: {
+						id: id
+					}
+				});
+			});
 		}).catch((error) => {
 			res.status(500).json({
 				error: error.message,
