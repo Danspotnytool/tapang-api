@@ -7,7 +7,7 @@ import ytdl from '@distube/ytdl-core';
 
 const ytmusic = new YTMusic();
 await ytmusic.initialize();
-const cookie = JSON.parse(process.env.YT_COOKIES.replace('\'', '"'));
+const cookie = JSON.parse(process.env.YT_COOKIES.replaceAll('\'', '"'));
 const agent = ytdl.createAgent(cookie, {
 	pipelining: 5,
 	maxRedirections: 2,
