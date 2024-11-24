@@ -2090,8 +2090,11 @@ var YTMusic = class {
    * @returns Song Data
    */
   async getSong(videoId) {
-	const data = await this.constructRequest("player", { videoId });
-	return SongParser.parse(data);
+    if (!videoId.match(/^[a-zA-Z0-9-_]{11}$/)) throw new Error("Invalid videoId");
+    const data = await this.constructRequest("player", { videoId });
+    const song = SongParser.parse(data);
+    if (song.videoId !== videoId) throw new Error("Invalid videoId");
+    return song;
   }
   /**
    * Get all possible information of a Video
@@ -2100,8 +2103,11 @@ var YTMusic = class {
    * @returns Video Data
    */
   async getVideo(videoId) {
-	const data = await this.constructRequest("player", { videoId });
-	return VideoParser.parse(data);
+    if (!videoId.match(/^[a-zA-Z0-9-_]{11}$/)) throw new Error("Invalid videoId");
+    const data = await this.constructRequest("player", { videoId });
+    const video = VideoParser.parse(data);
+    if (video.videoId !== videoId) throw new Error("Invalid videoId");
+    return video;
   }
   /**
    * Get lyrics of a specific Song
