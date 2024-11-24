@@ -102,6 +102,9 @@ export default (ytmusic) => {
 		});
 	});
 
+
+
+	// Download
 	song.get('/:id/download/', async (req, res) => {
 		const id = req.params.id;
 		if (!id) {
@@ -160,7 +163,6 @@ export default (ytmusic) => {
 			});
 		});
 	});
-
 	song.get('/:id/download/audio/', async (req, res) => {
 		const id = req.params.id;
 		if (!id) {
@@ -211,7 +213,6 @@ export default (ytmusic) => {
 			});
 		});
 	});
-
 	song.get('/:id/download/video/', async (req, res) => {
 		const id = req.params.id;
 		if (!id) {
@@ -263,5 +264,138 @@ export default (ytmusic) => {
 		});
 	});
 
+
+
+	// Stream
+	song.get('/:id/stream/audio/', async (req, res) => {
+		const id = req.params.id;
+		if (!id) {
+			return res.status(400).json({ error: 'ID is required' });
+		};
+
+		axios({
+			url: 'https://youtube-quick-video-downloader.p.rapidapi.com/api/youtube/links',
+			method: 'POST',
+			headers: {
+				'x-rapidapi-host': 'youtube-quick-video-downloader.p.rapidapi.com',
+				'x-rapidapi-key': '1003c07223msh07af8432abe6d7fp135876jsn34d096ee567f'
+			},
+			data: {
+				url: `https://www.youtube.com/watch?v=${id}`
+			}
+		}).then((response) => {
+			// Find the url with highest quality
+			/**
+			 * @type {Resource}
+			 */
+			const resources = response.data;
+			const highestQualityResource = resources.reduce((prev, curr) => {
+				if (curr.urls.qualityNumber > prev.urls.qualityNumber) {
+					return curr;
+				};
+				return prev;
+			});
+			const highestQualityUrl = highestQualityResource.urls.reduce((prev, curr) => {
+				if (curr.audio) {
+					if (curr.qualityNumber > prev.qualityNumber) {
+						return curr;
+					};
+				};
+				return prev;
+			});
+			if (!highestQualityUrl) {
+				return res.status(404).json({ error: 'No audio found' });
+			};
+
+			axios({
+				url: highestQualityUrl.url,
+				method: 'GET',
+				responseType: 'stream'
+			}).then((response) => {
+				res.setHeader('Content-Disposition', `attachment; filename="${highestQualityResource.meta.title}.${highestQualityUrl.extension}"`);
+				res.setHeader('Content-Type', `audio/${highestQualityUrl.extension}`);
+				response.data.pipe(res);
+			}).catch((error) => {
+				res.status(500).json({
+					error: error.message,
+					variables: {
+						id: id
+					}
+				});
+			});
+		}).catch((error) => {
+			res.status(500).json({
+				error: error.message,
+				variables: {
+					id: id
+				}
+			});
+		});
+	});
+	song.get('/:id/stream/video/', async (req, res) => {
+		const id = req.params.id;
+		if (!id) {
+			return res.status(400).json({ error: 'ID is required' });
+		};
+
+		axios({
+			url: 'https://youtube-quick-video-downloader.p.rapidapi.com/api/youtube/links',
+			method: 'POST',
+			headers: {
+				'x-rapidapi-host': 'youtube-quick-video-downloader.p.rapidapi.com',
+				'x-rapidapi-key': '1003c07223msh07af8432abe6d7fp135876jsn34d096ee567f'
+			},
+			data: {
+				url: `https://www.youtube.com/watch?v=${id}`
+			}
+		}).then((response) => {
+			// Find the url with highest quality
+			/**
+			 * @type {Resource}
+			 */
+			const resources = response.data;
+			const highestQualityResource = resources.reduce((prev, curr) => {
+				if (curr.urls.qualityNumber > prev.urls.qualityNumber) {
+					return curr;
+				};
+				return prev;
+			});
+			const highestQualityUrl = highestQualityResource.urls.reduce((prev, curr) => {
+				if (!curr.audio) {
+					if (curr.qualityNumber > prev.qualityNumber) {
+						return curr;
+					};
+				};
+				return prev;
+			});
+			if (!highestQualityUrl) {
+				return res.status(404).json({ error: 'No video found' });
+			};
+
+			axios({
+				url: highestQualityUrl.url,
+				method: 'GET',
+				responseType: 'stream'
+			}).then((response) => {
+				res.setHeader('Content-Disposition', `attachment; filename="${highestQualityResource.meta.title}.${highestQualityUrl.extension}"`);
+				res.setHeader('Content-Type', `video/${highestQualityUrl.extension}`);
+				response.data.pipe(res);
+			}).catch((error) => {
+				res.status(500).json({
+					error: error.message,
+					variables: {
+						id: id
+					}
+				});
+			});
+		}).catch((error) => {
+			res.status(500).json({
+				error: error.message,
+				variables: {
+					id: id
+				}
+			});
+		});
+	});
 	return song;
 };
