@@ -40,6 +40,8 @@ app.use((req, res, next) => {
 	res.header('Access-Control-Allow-Origin', '*');
 	res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
 
+	req.localAddress = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+
 	const log = logger.createLogUpdate(process.stdout);
 	const url = req.url;
 	log(`[${new Date().toLocaleString()}] ${req.method} ${url}`);

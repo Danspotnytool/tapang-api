@@ -14,8 +14,8 @@ export default (ytmusic, ytdl, agent) => {
 			return res.status(400).json({ error: 'ID is required' });
 		};
 
-		ytdl.getInfo(`https://www.youtube.com/watch?v=${id}`, { agent: agent }).then((info) => {
-			res.status(200).json(info.videoDetails);
+		ytmusic.getVideo(id).then((song) => {
+			res.status(200).json(song);
 		}).catch((error) => {
 			res.status(500).json({
 				error: error.message,
