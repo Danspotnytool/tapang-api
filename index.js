@@ -5,9 +5,13 @@ import YTMusic from 'ytmusic-api';
 import * as logger from 'log-update';
 import ytdl from '@distube/ytdl-core';
 
-const ytmusic = new YTMusic();
-await ytmusic.initialize();
 const cookie = JSON.parse(process.env.YT_COOKIES.replaceAll('\'', '"'));
+const ytmusic = new YTMusic();
+await ytmusic.initialize({
+	cookies: cookie.map((cookie) => {
+		return `${cookie.name}=${cookie.value}`;
+	}).join('; ')
+});
 const agent = ytdl.createAgent(cookie, {
 	pipelining: 5,
 	maxRedirections: 2,
