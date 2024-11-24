@@ -116,7 +116,11 @@ export default (ytmusic) => {
 			return res.status(400).json({ error: 'ID is required' });
 		};
 
-		const agent = ytdl.createAgent(cookies);
+		const agent = ytdl.createAgent(cookies, {
+			pipelining: 5,
+			maxRedirections: 5,
+			localAddress: req.localAddress
+		});
 
 		ytdl.getInfo(`https://www.youtube.com/watch?v=${id}`, { quality: 'highestaudio', agent }).then((info) => {
 			const audio = ytdl.downloadFromInfo(info, { quality: 'highestaudio' });
