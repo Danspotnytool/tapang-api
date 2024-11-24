@@ -43,12 +43,9 @@ app.use((req, res, next) => {
 	const url = req.url;
 	const agent = ytdl.createAgent(cookie, {
 		pipelining: 5,
-		maxRedirections: 2,
-		localAddress: req.localAddress
+		maxRedirections: 2
 	});
-
 	req.agent = agent;
-	console.log(req.agent);
 
 	const log = logger.createLogUpdate(process.stdout);
 

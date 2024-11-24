@@ -15,7 +15,8 @@ export default (ytmusic, ytdl) => {
 		};
 
 		ytdl.getInfo(`https://www.youtube.com/watch?v=${id}`, {
-			agent: req.agent,
+			lang: 'en',
+			agent: req.agent
 		}).then((info) => {
 			res.status(200).json(info);
 		}).catch((error) => {
