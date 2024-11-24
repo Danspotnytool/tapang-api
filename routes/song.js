@@ -1,6 +1,7 @@
 
 import express from 'express';
 import axios from 'axios';
+import yts from 'yt-search';
 
 const song = express.Router();
 
@@ -13,8 +14,9 @@ export default (ytmusic) => {
 		if (!id) {
 			return res.status(400).json({ error: 'ID is required' });
 		};
-		ytmusic.getSong(id).then((song) => {
-			res.status(200).json(song);
+
+		yts({ videoId: id }).then((result) => {
+			res.status(200).json(result);
 		}).catch((error) => {
 			res.status(500).json({
 				error: error.message,
@@ -49,7 +51,7 @@ export default (ytmusic) => {
 	 *    resourceId: String,
 	 *    urls: {
 	 *            url: String,
-	 *            name: 'MP3' | 'MP4'',
+	 *            name: 'MP3' | 'MP4',
 	 *            subName: '360p' | '480p' | '720p' | '1080p' | '1440p' | '2160p' | '144p' | '240p',
 	 *            extension: 'mp3' | 'mp4',
 	 *            quality: '360' | '480' | '720' | '1080' | '1440' | '2160' | '144' | '240',

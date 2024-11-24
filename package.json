@@ -13,11 +13,14 @@
 	"license": "ISC",
 	"description": "",
 	"dependencies": {
+		"@distube/ytdl-core": "^4.15.1",
 		"axios": "^1.7.7",
+		"dotenv": "^16.4.5",
 		"express": "^4.21.1",
 		"log-update": "^6.1.0",
 		"ws": "^8.18.0",
-		"ytmusic-api": "5.2.2"
+		"yt-search": "^2.12.1",
+		"ytmusic-api": "^5.2.2"
 	},
 	"devDependencies": {
 		"nodemon": "^3.1.7"
