@@ -7,15 +7,17 @@ const song = express.Router();
 /**
  * @type {(ytmusic: import('ytmusic-api').default, ytdl: import('@distube/ytdl-core'), agent: import('@distube/ytdl-core').Agent) => import('express').Router}
  */
-export default (ytmusic, ytdl, agent) => {
+export default (ytmusic, ytdl) => {
 	song.get('/:id', async (req, res) => {
 		const id = req.params.id;
 		if (!id) {
 			return res.status(400).json({ error: 'ID is required' });
 		};
 
-		(ytmusic.getSong(id) || ytmusic.getVideo(id)).then((song) => {
-			res.status(200).json(song);
+		ytdl.getInfo(`https://www.youtube.com/watch?v=${id}`, {
+			agent: req.agent,
+		}).then((info) => {
+			res.status(200).json(info);
 		}).catch((error) => {
 			res.status(500).json({
 				error: error.message,
@@ -23,7 +25,6 @@ export default (ytmusic, ytdl, agent) => {
 					id: id
 				}
 			});
-			console.error(error);
 		});
 	});
 

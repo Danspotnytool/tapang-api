@@ -12,12 +12,6 @@ await ytmusic.initialize({
 		return `${cookie.name}=${cookie.value}`;
 	}).join('; ')
 });
-const agent = ytdl.createAgent(cookie, {
-	pipelining: 5,
-	maxRedirections: 2,
-	localAddress: '127.0.0.1'
-});
-
 import express from 'express';
 import http from 'http';
 import { WebSocketServer } from 'ws';
@@ -46,8 +40,18 @@ app.use((req, res, next) => {
 
 	req.localAddress = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 
-	const log = logger.createLogUpdate(process.stdout);
 	const url = req.url;
+	const agent = ytdl.createAgent(cookie, {
+		pipelining: 5,
+		maxRedirections: 2,
+		localAddress: req.localAddress
+	});
+
+	req.agent = agent;
+	console.log(req.agent);
+
+	const log = logger.createLogUpdate(process.stdout);
+
 	log(`[${new Date().toLocaleString()}] ${req.method} ${url}`);
 
 	next();
@@ -77,9 +81,9 @@ app.get('/', (req, res) => {
 
 // API
 import search from './routes/search.js';
-app.use('/search', search(ytmusic, ytdl, agent));
+app.use('/search', search(ytmusic, ytdl));
 import song from './routes/song.js';
-app.use('/song', song(ytmusic, ytdl, agent));
+app.use('/song', song(ytmusic, ytdl));
 
 
 
