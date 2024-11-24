@@ -116,10 +116,12 @@ export default (ytmusic) => {
 			return res.status(400).json({ error: 'ID is required' });
 		};
 
-		ytdl.getInfo(`https://www.youtube.com/watch?v=${id}`, { quality: 'highestaudio' }).then((info) => {
+		const agent = ytdl.createAgent(cookies);
+
+		ytdl.getInfo(`https://www.youtube.com/watch?v=${id}`, { quality: 'highestaudio', agent }).then((info) => {
 			const audio = ytdl.downloadFromInfo(info, { quality: 'highestaudio' });
-			res.setHeader('Content-Disposition', `attachment; filename="${info.videoDetails.title.replace(/[^a-zA-Z0-9]/g, '_')}.${info.formats[0].container}"`);
-			res.setHeader('Content-Type', `audio/${info.formats[0].container}`);
+			res.setHeader('Content-Disposition', `attachment; filename="${id}.mp3"`);
+			res.setHeader('Content-Type', `audio/mp3`);
 			audio.pipe(res);
 		}).catch((error) => {
 			res.status(500).json({
