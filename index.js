@@ -41,11 +41,6 @@ app.use((req, res, next) => {
 	req.localAddress = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 
 	const url = req.url;
-	const agent = ytdl.createAgent(cookie, {
-		pipelining: 5,
-		maxRedirections: 2
-	});
-	req.agent = agent;
 
 	const log = logger.createLogUpdate(process.stdout);
 
