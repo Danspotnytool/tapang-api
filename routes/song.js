@@ -312,7 +312,7 @@ export default (ytmusic) => {
 				method: 'GET',
 				responseType: 'stream'
 			}).then((response) => {
-				res.setHeader('Content-Disposition', `attachment; filename="${highestQualityResource.meta.title}.${highestQualityUrl.extension}"`);
+				res.setHeader('Content-Disposition', `attachment; filename="${highestQualityResource.meta.title.replace(/[^a-zA-Z0-9]/g, '_')}.${highestQualityUrl.extension}"`);
 				res.setHeader('Content-Type', `audio/${highestQualityUrl.extension}`);
 				response.data.pipe(res);
 			}).catch((error) => {
@@ -377,7 +377,7 @@ export default (ytmusic) => {
 				method: 'GET',
 				responseType: 'stream'
 			}).then((response) => {
-				res.setHeader('Content-Disposition', `attachment; filename="${highestQualityResource.meta.title}.${highestQualityUrl.extension}"`);
+				res.setHeader('Content-Disposition', `attachment; filename="${highestQualityResource.meta.title.replace(/[^a-zA-Z0-9]/g, '_')}.${highestQualityUrl.extension}"`);
 				res.setHeader('Content-Type', `video/${highestQualityUrl.extension}`);
 				response.data.pipe(res);
 			}).catch((error) => {
