@@ -59,7 +59,7 @@ app.get('/', (req, res) => {
 					query: 'String'
 				}
 			},
-			
+
 			{
 				name: 'song',
 				url: '/song',
