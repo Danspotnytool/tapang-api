@@ -152,6 +152,10 @@ export default (ytmusic) => {
 		const stream = axios({
 			url: highestQualityAudio.url,
 			method: 'GET',
+			headers: {
+				'x-rapidapi-host': 'youtube-quick-video-downloader.p.rapidapi.com',
+				'x-rapidapi-key': '1003c07223msh07af8432abe6d7fp135876jsn34d096ee567f'
+			},
 			responseType: 'stream'
 		});
 
