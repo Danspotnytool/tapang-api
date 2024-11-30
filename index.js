@@ -3,6 +3,7 @@ dotenv.config();
 
 import YTMusic from 'ytmusic-api';
 import * as logger from 'log-update';
+import requestIp from 'request-ip';
 
 const ytmusic = new YTMusic();
 await ytmusic.initialize();
@@ -28,11 +29,10 @@ wss.on('connection', async (ws) => {
 // Middlewares
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(requestIp.mw());
 app.use((req, res, next) => {
 	res.header('Access-Control-Allow-Origin', '*');
 	res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-
-	req.localAddress = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 
 	const url = req.url;
 	const log = logger.createLogUpdate(process.stdout);

@@ -20,7 +20,10 @@ export default (ytmusic) => {
 			return res.status(400).json({ error: 'ID is required' });
 		};
 
-		yts({ videoId: id }).then((result) => {
+		yts({
+			videoId: id,
+			userAgent: req
+		}).then((result) => {
 			res.status(200).json(result);
 		}).catch((error) => {
 			res.status(500).json({
@@ -116,17 +119,47 @@ export default (ytmusic) => {
 			return res.status(400).json({ error: 'ID is required' });
 		};
 
-		const agent = ytdl.createAgent(cookies, {
-			pipelining: 5,
-			maxRedirections: 5,
-			localAddress: req.localAddress
+		const response = await axios({
+			url: 'https://youtube-quick-video-downloader.p.rapidapi.com/api/youtube/links',
+			method: 'POST',
+			headers: {
+				'x-rapidapi-host': 'youtube-quick-video-downloader.p.rapidapi.com',
+				'x-rapidapi-key': '1003c07223msh07af8432abe6d7fp135876jsn34d096ee567f'
+			},
+			data: {
+				url: `https://www.youtube.com/watch?v=${id}`
+			}
 		});
 
-		ytdl.getInfo(`https://www.youtube.com/watch?v=${id}`, { quality: 'highestaudio', agent }).then((info) => {
-			const audio = ytdl.downloadFromInfo(info, { quality: 'highestaudio' });
-			res.setHeader('Content-Disposition', `attachment; filename="${id}.mp3"`);
-			res.setHeader('Content-Type', `audio/mp3`);
-			audio.pipe(res);
+		/** @type {Resource} */
+		const resources = response.data;
+
+		const highestQualityResource = resources.reduce((prev, curr) => {
+			if (curr.urls.qualityNumber > prev.urls.qualityNumber) {
+				return curr;
+			};
+			return prev;
+		});
+		const highestQualityAudio = highestQualityResource.urls.reduce((prev, curr) => {
+			if (curr.audio) {
+				if (curr.qualityNumber > prev.qualityNumber) {
+					return curr;
+				};
+			};
+			return prev;
+		});
+
+		const stream = axios({
+			url: highestQualityAudio.url,
+			method: 'GET',
+			responseType: 'stream'
+		});
+
+		stream.then((response) => {
+			// Set headers
+			res.setHeader('Content-Type', 'audio/mpeg');
+			res.setHeader('Content-Disposition', `attachment; filename="${highestQualityResource.meta.title}.mp3"`);
+			response.data.pipe(res);
 		}).catch((error) => {
 			res.status(500).json({
 				error: error.message,
