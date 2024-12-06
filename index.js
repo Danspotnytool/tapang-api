@@ -45,6 +45,8 @@ app.use((req, res, next) => {
 // Routes
 import usersRouter from './routes/users.js';
 app.use('/users', usersRouter);
+import monitorsRouter from './routes/monitors.js';
+app.use('/monitors', monitorsRouter);
 
 app.get('/', (req, res) => {
 	res.status(200).json({

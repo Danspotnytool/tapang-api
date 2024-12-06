@@ -48,21 +48,14 @@ router.get('/:monitorId', async (req, res) => {
 /**
  * Create a monitor
  * Parameters: null
- * Body: { temperature, humidity }
+ * Body: Null
  * Response: MonitorObject
  */
 router.post('/', async (req, res) => {
-	const { temperature, humidity } = req.body;
-
-	if (!temperature || !humidity) {
-		res.status(400).json({ message: 'Missing required temperature or humidity'});
-		return;
-	};
-
 	const monitor = {
 		id: Date.now().toString(),
-		temperature,
-		humidity
+		temperature: 0,
+		humidity: 0
 	};
 
 	monitors.push(monitor);
@@ -75,7 +68,7 @@ router.post('/', async (req, res) => {
  * Body: { temperature, humidity }
  * Response: MonitorObject
  */
-router.put('/:monitorId', async (req, res) => {
+router.patch('/:monitorId', async (req, res) => {
 	const monitorId = req.params.monitorId;
 	const monitor = monitors.find((monitor) => monitor.id === monitorId);
 
