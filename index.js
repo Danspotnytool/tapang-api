@@ -43,15 +43,22 @@ app.use((req, res, next) => {
 
 
 // Routes
+import usersRouter from './routes/users.js';
+app.use('/users', usersRouter);
+
 app.get('/', (req, res) => {
 	res.status(200).json({
 		message: 'Hello! From Tapang API',
-		rotes: []
+		rotes: {
+			users: usersRouter.stack.map((layer) => {
+				return {
+					method: layer.route.stack[0].method,
+					path: layer.route.path
+				};
+			})
+		}
 	});
 });
-
-import usersRouter from './routes/users.js';
-app.use('/users', usersRouter);
 
 
 
