@@ -1,15 +1,13 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
-import YTMusic from 'ytmusic-api';
-import * as logger from 'log-update';
 import requestIp from 'request-ip';
 
-const ytmusic = new YTMusic();
-await ytmusic.initialize();
 import express from 'express';
 import http from 'http';
 import { WebSocketServer } from 'ws';
+
+import { users } from './utils/database.js';
 
 // Constants
 const app = express();
@@ -49,62 +47,9 @@ app.use((req, res, next) => {
 app.get('/', (req, res) => {
 	res.status(200).json({
 		message: 'Hello! From Tapang API',
-		rotes: [
-			{
-				name: 'search',
-				url: '/search',
-				method: 'GET',
-				description: 'Search for songs, albums, artists, and playlists',
-				params: {
-					query: 'String'
-				}
-			},
-
-			{
-				name: 'song',
-				url: '/song',
-				method: 'GET',
-				description: 'Get song details',
-				params: {
-					id: 'String'
-				}
-			},
-			{
-				name: 'song lyrics',
-				url: '/song/:id/lyrics',
-				method: 'GET',
-				description: 'Get song lyrics',
-				params: {
-					id: 'String'
-				}
-			},
-			{
-				name: 'song resource',
-				url: '/song/:id/resource',
-				method: 'GET',
-				description: 'Get song resource',
-				params: {
-					id: 'String'
-				}
-			},
-			{
-				name: 'song stream audio',
-				url: '/song/:id/stream',
-				method: 'GET',
-				description: 'Stream song audio',
-				params: {
-					id: 'String'
-				}
-			}
-		]
+		rotes: []
 	});
 });
-
-// API
-import search from './routes/search.js';
-app.use('/search', search(ytmusic));
-import song from './routes/song.js';
-app.use('/song', song(ytmusic));
 
 
 
