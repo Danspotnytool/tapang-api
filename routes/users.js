@@ -37,6 +37,10 @@ router.get('/', async (req, res) => {
  */
 router.get('/:userId', async (req, res) => {
 	const userId = req.params.userId;
+	if (!userId) {
+		res.status(400).json({ message: 'Missing required userId' });
+		return;
+	};
 	const snapshot = await users.child(userId).once('value');
 	const data = snapshot.val();
 
@@ -58,6 +62,10 @@ router.get('/:userId', async (req, res) => {
  */
 router.post('/', async (req, res) => {
 	const { username, email, password } = req.body;
+	if (!username || !email || !password) {
+		res.status(400).json({ message: 'Missing required username, email, or password' });
+		return;
+	};
 	const hashedPassword = await bcrypt.hash(password, 10);
 	const userId = users.push().key;
 	const user = {
@@ -81,7 +89,10 @@ router.post('/', async (req, res) => {
  */
 router.post('/sign', async (req, res) => {
 	const { emailOrUsername, password } = req.body;
-	console.log(emailOrUsername, password);
+	if (!emailOrUsername || !password) {
+		res.status(400).json({ message: 'Missing required email or username, or password' });
+		return;
+	};
 	
 	const snapshot = await users.once('value');
 	const data = snapshot.val();
@@ -119,6 +130,11 @@ router.post('/sign', async (req, res) => {
  */
 router.delete('/sign', async (req, res) => {
 	const { userId, token } = req.body;
+	if (!userId || !token) {
+		res.status(400).json({ message: 'Missing required userId or token' });
+		return;
+	};
+
 	const snapshot = await users.child(userId).once('value');
 	const user = snapshot.val();
 	if (!user) {
