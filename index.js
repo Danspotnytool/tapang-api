@@ -2,12 +2,11 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 import requestIp from 'request-ip';
+import * as logger from 'log-update';
 
 import express from 'express';
 import http from 'http';
 import { WebSocketServer } from 'ws';
-
-import { users } from './utils/database.js';
 
 // Constants
 const app = express();
@@ -50,6 +49,9 @@ app.get('/', (req, res) => {
 		rotes: []
 	});
 });
+
+import usersRouter from './routes/users.js';
+app.use('/users', usersRouter);
 
 
 
