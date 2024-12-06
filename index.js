@@ -1,11 +1,9 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
-import YTMusic from 'ytmusic-api';
+import requestIp from 'request-ip';
 import * as logger from 'log-update';
 
-const ytmusic = new YTMusic();
-await ytmusic.initialize();
 import express from 'express';
 import http from 'http';
 import { WebSocketServer } from 'ws';
@@ -28,11 +26,10 @@ wss.on('connection', async (ws) => {
 // Middlewares
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(requestIp.mw());
 app.use((req, res, next) => {
 	res.header('Access-Control-Allow-Origin', '*');
 	res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-
-	req.localAddress = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 
 	const url = req.url;
 	const log = logger.createLogUpdate(process.stdout);
@@ -46,26 +43,22 @@ app.use((req, res, next) => {
 
 
 // Routes
+import usersRouter from './routes/users.js';
+app.use('/users', usersRouter);
+
 app.get('/', (req, res) => {
 	res.status(200).json({
 		message: 'Hello! From Tapang API',
-		sample: {
-			search: '/search/:query',
-			song: '/song/:id',
-			lyrics: '/song/:id/lyrics',
-			resource: '/song/:id/resource',
-			download: '/song/:id/download',
-			audio: '/song/:id/download/audio',
-			video: '/song/:id/download/video'
+		rotes: {
+			users: usersRouter.stack.map((layer) => {
+				return {
+					method: layer.route.stack[0].method,
+					path: layer.route.path
+				};
+			})
 		}
 	});
 });
-
-// API
-import search from './routes/search.js';
-app.use('/search', search(ytmusic));
-import song from './routes/song.js';
-app.use('/song', song(ytmusic));
 
 
 
