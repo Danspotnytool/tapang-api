@@ -6,8 +6,7 @@ const router = express.Router();
 /**
  * @type {{
  * 		id: String,
- * 		temperature: Number,
- * 		humidity: Number
+ * 		temperature: Number
  * }[]}
  */
 const monitors = [];
@@ -54,8 +53,7 @@ router.get('/:monitorId', async (req, res) => {
 router.post('/', async (req, res) => {
 	const monitor = {
 		id: Date.now().toString(),
-		temperature: 0,
-		humidity: 0
+		temperature: 0
 	};
 
 	monitors.push(monitor);
@@ -65,7 +63,7 @@ router.post('/', async (req, res) => {
 /**
  * Update a monitor
  * Parameters: monitorId
- * Body: { temperature, humidity }
+ * Body: { temperature }
  * Response: MonitorObject
  */
 router.patch('/:monitorId', async (req, res) => {
@@ -77,7 +75,7 @@ router.patch('/:monitorId', async (req, res) => {
 		return;
 	};
 
-	const { temperature, humidity } = req.body;
+	const { temperature } = req.body;
 	monitor.temperature = temperature;
 	monitor.humidity = humidity;
 
