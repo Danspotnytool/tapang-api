@@ -12,16 +12,8 @@ import { WebSocketServer } from 'ws';
 // Constants
 const app = express();
 const server = http.createServer(app);
-const wss = new WebSocketServer({ server });
+const wss = new WebSocketServer({ server: server });
 const PORT = process.env.PORT || 5000;
-
-// Websocket
-wss.on('connection', async (ws) => {
-	ws.on('message', async (message) => {
-		console.log('Received message:', message);
-	});
-});
-
 
 
 // Middlewares
@@ -70,4 +62,7 @@ app.get('/', (req, res) => {
 // Start server
 server.listen(PORT, () => {
 	console.log(`Server listening on port ${PORT}`);
+});
+
+wss.on('connection', async (ws, req) => {
 });
