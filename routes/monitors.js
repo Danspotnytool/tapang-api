@@ -8,6 +8,13 @@ const router = express.Router();
  * 		id: String,
  * 		temperature: Number,
  * 		code?: String,
+ * 		history?: {
+ * 			temperature: Number,
+ * 			date: Date
+ * 		}[],
+ * 		decreasing?: Boolean,
+ * 		increasing?: Boolean,
+ * 		normal?: Boolean,
  * 		connected?: Boolean
  * }[]}
  */
@@ -55,7 +62,12 @@ router.get('/:monitorId', async (req, res) => {
 router.post('/', async (req, res) => {
 	const monitor = {
 		id: Date.now().toString(),
-		temperature: 0
+		temperature: 0,
+		history: [],
+		decreasing: false,
+		increasing: false,
+		normal: true,
+		connected: false
 	};
 
 	monitors.push(monitor);
@@ -101,10 +113,38 @@ router.post('/:monitorId/temperature', async (req, res) => {
 	};
 
 	const monitor = monitors.find((monitor) => monitor.id === monitorId);
-
 	if (!monitor) {
 		res.status(404).json({ message: 'Monitor not found' });
 		return;
+	};
+	if (monitor.history.length >= 50) {
+		monitor.history.shift();
+	};
+	monitor.history.push({
+		temperature: monitor.temperature,
+		date: new Date()
+	});
+
+	// Analyze history
+	const history = monitor.history;
+	let sum = 0;
+	for (const record of history) {
+		sum += record.temperature;
+	};
+	const average = sum / history.length;
+	const last = history[history.length - 1].temperature;
+	if (last > average) {
+		monitor.increasing = true;
+		monitor.decreasing = false;
+		monitor.normal = false;
+	} else if (last < average) {
+		monitor.decreasing = true;
+		monitor.increasing = false;
+		monitor.normal = false;
+	} else {
+		monitor.normal = true;
+		monitor.increasing = false;
+		monitor.decreasing = false;
 	};
 
 	const { temperature } = req.body;
